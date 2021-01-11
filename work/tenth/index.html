@@ -97,7 +97,7 @@
         });
 
         $(document).on('click', '[data-js="page-next"]', function(evet) {
-          $('body, html').scrollTop(0)
+          $('body, html').scrollTop(0);
           evet.preventDefault();
           if ($(this).hasClass('disabled')) {
             return false;
@@ -107,7 +107,7 @@
         });
 
         $(document).on('click', '[data-js="page-prev"]', function(evet) {
-          $('body, html').scrollTop(0)
+          $('body, html').scrollTop(0);
           evet.preventDefault();
           if ($(this).hasClass('disabled')) {
             return false;
@@ -142,26 +142,24 @@
         }
 
         function showBookData(data) {
-          var countZero = 0;
-          if (data.count === countZero) {
+          if (data.count === 0) {
             var errorMessage = $('<p class="error-message">検索結果が見つかりませんでした。<br>別のキーワードで検索してください。</p>');
             $('.message').append(errorMessage);
           } else {
-            var itemData = '';
-            $.each(data.Items, function(i, item) {
-              itemData += '<li class="lists__item">' +
-                            '<div class="lists__item__inner">' +
-                              '<a href=" ' + item.Item.itemUrl + ' " class="lists__item__link" target="_blank">' +
-                                '<img src=" ' + item.Item.mediumImageUrl + ' " class="lists__item__img" alt="">' +
-                                '<p class="lists__item__detail">作品名： ' + item.Item.title + ' </p>' +
-                                '<p class="lists__item__detail">作者　： ' + item.Item.author + ' </p>' +
-                                '<p class="lists__item__detail">出版社： ' + item.Item.publisherName + ' </p>' +
-                              '</a>' +
-                            '</div>' +
-                          '</li>';
-            });
-            $('.lists').append(itemData);
-            showPagination(data);
+            console.log();
+            $.each(data.Items, function(index, element) {
+              $('.lists').append( '<li class="lists__item">' +
+                                    '<div class="lists__item__inner">' +
+                                      '<a href=" ' + element.Item.itemUrl + ' " class="lists__item__link" target="_blank">' +
+                                        '<img src=" ' + element.Item.mediumImageUrl + ' " class="lists__item__img" alt="">' +
+                                        '<p class="lists__item__detail">作品名： ' + element.Item.title + ' </p>' +
+                                        '<p class="lists__item__detail">作者　： ' + element.Item.author + ' </p>' +
+                                        '<p class="lists__item__detail">出版社： ' + element.Item.publisherName + ' </p>' +
+                                      '</a>' +
+                                    '</div>' +
+                                  '</li>');
+                        });
+                        showPagination(data);
           }
         }
 
@@ -189,8 +187,8 @@
         }
 
         function clearPageData() {
-          $('.lists').empty();
-          $('.pager').remove();
+          $('.lists').empty(); //要素の中身を空にする。
+          $('.pager').remove();　//要素を消す
           $('.message').empty();
         }
 
@@ -205,6 +203,9 @@
               break;
             case 429:
               errorMessage = 'リクエスト過多です。しばらく時間を置いてからお試しください。';
+              break;
+              default:
+                errorMessage = '予期せぬエラー。'
           }
           $('.message').append('<p class="error-message">' + errorMessage + '</p>');
         }
@@ -212,3 +213,19 @@
     </script>
   </body>
 </html>
+
+<!-- GET -->
+<!-- GETは指定したリソースの表現を転送するようにリクエストするメソッドです。
+つまり、何か情報を検索したり取得するために使うためのメソッドになります。 -->
+<!-- また仕様で安全かつ冪等であると定義されているため、基本的に読み取り専用な機能に対して使うべきメソッドになります。
+
+GETを使うとどのような処理をしていたとしてもクライアントには安全なAPIだと見なされます。
+これは、クライアントからはサーバがどのような処理をやっているかを知ることはできないためです。 -->
+
+
+<!-- POST
+POSTは指定したリソースを実装した機能に従って処理をする機能になります。
+
+主に登録処理や更新処理などの、書き込みがありリソースが更新される可能性のある処理に対して使うメソッドになります。 -->
+<!-- また、GETとは反対に冪等でないかつ安全でないと定義されています。 -->
+<!-- 機密性の高いデータの送信はPOSTを使うべき。 -->
