@@ -90,9 +90,9 @@
       $(function() {
         var page = 0;
         var keyword = '';
-        $('[data-js="search-btn"]').on('click', function() {
-          page = 1;
-          keyword = $('[data-js="search-word"]').val();
+        $('[data-js="search-btn"]').on('click', function() {   //セレクタの部分説明。今回はdata属性を指定しており、値が属性の値と完全に一致した要素のイベント発生時に実行する処理を設定
+          page = 1; //1ページ目から開く。
+          keyword = $('[data-js="search-word"]').val(); //属性値と値が一致した時、value属性の値を取得する。
           getBookData();
         });
 
@@ -117,17 +117,17 @@
         });
 
         function getBookData() {
-          $.ajax({
+          $.ajax({  //ajaxの引数のオブジェクトが以下。
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
             type: 'GET',
-            datatype: 'json',
-            data: {
+            datatype: 'json', //スキーマ
+            data: { //dataのバリューが以下。
               // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
               applicationId: appId, 
               booksGenreId: '001',
               hits: 20,
-              page: page,
-              keyword: keyword
+              page: page, //変数名page 91行目
+              keyword: keyword //変数名kayword 92行目
             },
           }).done(function(data) {
             // この中にデータ取得後の動きを記述していきます。
@@ -135,7 +135,8 @@
             clearPageData();
             showBookData(data);
           }).fail(function(error) {
-            console.log(error);
+            // エラー時
+            console.log(error. status);
             clearPageData();
             showErrorMessage(error);
           });
@@ -147,8 +148,9 @@
             $('.message').append(errorMessage);
           } else {
             console.log();
+            var bookData = '';
             $.each(data.Items, function(index, element) {
-              $('.lists').append( '<li class="lists__item">' +
+              bookData += '<li class="lists__item">' +  //+の意味を調べる 前要素の直後にある要素を選択する。 //eachのなかでappend呼ばない。リファクター部分。
                                     '<div class="lists__item__inner">' +
                                       '<a href=" ' + element.Item.itemUrl + ' " class="lists__item__link" target="_blank">' +
                                         '<img src=" ' + element.Item.mediumImageUrl + ' " class="lists__item__img" alt="">' +
@@ -157,9 +159,10 @@
                                         '<p class="lists__item__detail">出版社： ' + element.Item.publisherName + ' </p>' +
                                       '</a>' +
                                     '</div>' +
-                                  '</li>');
-                        });
-                        showPagination(data);
+                                  '</li>';
+            });
+            $('.lists').append(bookData);
+            showPagination(data);
           }
         }
 
@@ -177,7 +180,7 @@
                            '</div>';
           $('.lists').after(pagination);
           
-          var pageFirst = 1;
+          var pageFirst = 1; //説明未、可読性にかけるの言い方
           if (data.page === pageFirst) {
             $('.btn-item[data-js="page-prev"]').addClass('disabled');
           }
@@ -188,7 +191,7 @@
 
         function clearPageData() {
           $('.lists').empty(); //要素の中身を空にする。
-          $('.pager').remove();　//要素を消す
+          $('.pager').remove();//要素を消す
           $('.message').empty();
         }
 
@@ -204,12 +207,13 @@
             case 429:
               errorMessage = 'リクエスト過多です。しばらく時間を置いてからお試しください。';
               break;
-              default:
-                errorMessage = '予期せぬエラー。'
+            default:
+              errorMessage = '予期せぬエラー。';
+              break;
           }
           $('.message').append('<p class="error-message">' + errorMessage + '</p>');
         }
-      })
+      });
     </script>
   </body>
 </html>
