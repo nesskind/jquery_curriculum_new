@@ -88,7 +88,7 @@
       //   </div>
       // </div>
       $(function() {
-        var page = 0;
+        var page = null; //数値の場合NULLと表記
         var keyword = '';
         $('[data-js="search-btn"]').on('click', function() {   //セレクタの部分説明。今回はdata属性を指定しており、値が属性の値と完全に一致した要素のイベント発生時に実行する処理を設定
           page = 1; //1ページ目から開く。
@@ -96,31 +96,31 @@
           getBookData();
         });
 
-        $(document).on('click', '[data-js="page-next"]', function(evet) {
-          $('body, html').scrollTop(0);
-          evet.preventDefault();
+        $(document).on('click', '[data-js="page-next"]', function(event) { //引数適切な物を書く
+          event.preventDefault();
           if ($(this).hasClass('disabled')) {
             return false;
           }
           page++;
           getBookData();
+          $('body, html').scrollTop(0);
         });
 
-        $(document).on('click', '[data-js="page-prev"]', function(evet) {
-          $('body, html').scrollTop(0);
-          evet.preventDefault();
+        $(document).on('click', '[data-js="page-prev"]', function(event) {
+          event.preventDefault();
           if ($(this).hasClass('disabled')) {
             return false;
           }
           page--;
           getBookData();
+          $('body, html').scrollTop(0);
         });
 
         function getBookData() {
           $.ajax({  //ajaxの引数のオブジェクトが以下。
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-            type: 'GET',
-            datatype: 'json', //スキーマ
+            type: 'POST', //HTTPリクエスト 
+            datatype: 'json', //スキーマ レスポンス
             data: { //dataのバリューが以下。
               // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
               applicationId: appId, 
@@ -129,14 +129,13 @@
               page: page, //変数名page 91行目
               keyword: keyword //変数名kayword 92行目
             },
-          }).done(function(data) {
+          }).done(function(data) { //引数直す。
             // この中にデータ取得後の動きを記述していきます。
             console.log(data);
             clearPageData();
             showBookData(data);
           }).fail(function(error) {
-            // エラー時
-            console.log(error. status);
+            //エラー時
             clearPageData();
             showErrorMessage(error);
           });
@@ -151,15 +150,15 @@
             var bookData = '';
             $.each(data.Items, function(index, element) {
               bookData += '<li class="lists__item">' +  //+の意味を調べる 前要素の直後にある要素を選択する。 //eachのなかでappend呼ばない。リファクター部分。
-                                    '<div class="lists__item__inner">' +
-                                      '<a href=" ' + element.Item.itemUrl + ' " class="lists__item__link" target="_blank">' +
-                                        '<img src=" ' + element.Item.mediumImageUrl + ' " class="lists__item__img" alt="">' +
-                                        '<p class="lists__item__detail">作品名： ' + element.Item.title + ' </p>' +
-                                        '<p class="lists__item__detail">作者　： ' + element.Item.author + ' </p>' +
-                                        '<p class="lists__item__detail">出版社： ' + element.Item.publisherName + ' </p>' +
-                                      '</a>' +
-                                    '</div>' +
-                                  '</li>';
+                              '<div class="lists__item__inner">' +
+                                '<a href=" ' + element.Item.itemUrl + ' " class="lists__item__link" target="_blank">' +
+                                  '<img src=" ' + element.Item.mediumImageUrl + ' " class="lists__item__img" alt="">' +
+                                  '<p class="lists__item__detail">作品名： ' + element.Item.title + ' </p>' +
+                                  '<p class="lists__item__detail">作者　： ' + element.Item.author + ' </p>' +
+                                  '<p class="lists__item__detail">出版社： ' + element.Item.publisherName + ' </p>' +
+                                '</a>' +
+                              '</div>' +
+                            '</li>';
             });
             $('.lists').append(bookData);
             showPagination(data);
@@ -180,7 +179,7 @@
                            '</div>';
           $('.lists').after(pagination);
           
-          var pageFirst = 1; //説明未、可読性にかけるの言い方
+          var pageFirst = 1; //説明未、可読性にかけるの言い方//マジックナンバー
           if (data.page === pageFirst) {
             $('.btn-item[data-js="page-prev"]').addClass('disabled');
           }
@@ -225,6 +224,7 @@
 
 GETを使うとどのような処理をしていたとしてもクライアントには安全なAPIだと見なされます。
 これは、クライアントからはサーバがどのような処理をやっているかを知ることはできないためです。 -->
+<!-- クエリストレングパラメータ -->
 
 
 <!-- POST
@@ -233,3 +233,5 @@ POSTは指定したリソースを実装した機能に従って処理をする�
 主に登録処理や更新処理などの、書き込みがありリソースが更新される可能性のある処理に対して使うメソッドになります。 -->
 <!-- また、GETとは反対に冪等でないかつ安全でないと定義されています。 -->
 <!-- 機密性の高いデータの送信はPOSTを使うべき。 -->
+<!-- Request URL: https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522?applicationId=1006365375305608282&booksGenreId=001&hits=20&page=1&keyword=a -->
+<!-- フォームデータ -->
