@@ -119,7 +119,7 @@
         function getBookData() {
           $.ajax({  //ajaxの引数のオブジェクトが以下。
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
-            type: 'POST', //HTTPリクエスト 
+            type: 'GET', //HTTPリクエスト 
             datatype: 'json', //スキーマ レスポンス
             data: { //dataのバリューが以下。
               // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
